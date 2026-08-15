@@ -1,23 +1,24 @@
 import { useCallback, useRef, useState } from 'react';
 import type { SSEEvent, ProgressStep } from '@/types';
 import { localId } from '@/utils';
+import { API_BASE_URL } from '@/constants';
+
+export interface NexaStreamPayload {
+  query: string;
+  sessionId?: string | null;
+  accountId?: string | null;
+  date?: string | null;
+  modelId?: string | null;
+}
 
 export interface UseNexaStreamOptions {
-  onToken: (token: string) => void;
-  onProgress: (step: ProgressStep) => void;
-  onDone: (finalResponse: string, sessionId?: string) => void;
-  onError: (message: string) => void;
+  onToken?: (token: string) => void;
+  onProgress?: (step: ProgressStep) => void;
+  onDone?: (finalResponse: string, sessionId?: string) => void;
+  onError?: (message: string) => void;
 }
 
-export interface SendMessagePayload {
-  query: string;
-  sessionId: string | null;
-  accountId: string | null;
-  date: string | null;
-  modelId?: string;
-}
-
-export function useNexaStream(options: UseNexaStreamOptions) {
+export function useNexaStream(options: UseNexaStreamOptions = {}) {
   const [isStreaming, setIsStreaming] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const accumulatedRef = useRef<string>('');
@@ -26,7 +27,7 @@ export function useNexaStream(options: UseNexaStreamOptions) {
   optionsRef.current = options;
 
   const sendMessage = useCallback(
-    async (payload: SendMessagePayload) => {
+    async (payload: NexaStreamPayload) => {
       // Cancel any ongoing stream
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -40,7 +41,8 @@ export function useNexaStream(options: UseNexaStreamOptions) {
 
       try {
         const token = localStorage.getItem('nexa_access_token');
-        const response = await fetch('/api/chat/stream', {
+        const streamUrl = `${API_BASE_URL}/chat/stream`;
+        const response = await fetch(streamUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -107,12 +109,12 @@ export function useNexaStream(options: UseNexaStreamOptions) {
 
         if (!isDoneRef.current) {
           isDoneRef.current = true;
-          optionsRef.current.onDone(accumulatedRef.current);
+          optionsRef.current.onDone?.(accumulatedRef.current);
         }
       } catch (err) {
         if ((err as Error).name === 'AbortError') return;
         const message = err instanceof Error ? err.message : 'NEXA encountered an error';
-        optionsRef.current.onError(message);
+        optionsRef.current.onError?.(message);
       } finally {
         setIsStreaming(false);
         abortControllerRef.current = null;
@@ -126,12 +128,12 @@ export function useNexaStream(options: UseNexaStreamOptions) {
       case 'token': {
         const tokenChunk = data.token ?? data.content ?? '';
         accumulatedRef.current += tokenChunk;
-        optionsRef.current.onToken(tokenChunk);
+        optionsRef.current.onToken?.(tokenChunk);
         break;
       }
 
       case 'progress':
-        optionsRef.current.onProgress({
+        optionsRef.current.onProgress?.({
           id: data.id || localId(),
           message: data.message || data.content || '',
           status: data.status || data.stepStatus || 'active',
@@ -144,19 +146,19 @@ export function useNexaStream(options: UseNexaStreamOptions) {
         }
         if (!isDoneRef.current) {
           isDoneRef.current = true;
-          optionsRef.current.onDone(accumulatedRef.current, data.session_id);
+          optionsRef.current.onDone?.(accumulatedRef.current, data.session_id);
         }
         break;
       }
 
       case 'error':
-        optionsRef.current.onError(data.message || data.content || 'Something went wrong');
+        optionsRef.current.onError?.(data.message || data.content || 'Something went wrong');
         break;
 
       default:
         if (data.token) {
           accumulatedRef.current += data.token;
-          optionsRef.current.onToken(data.token);
+          optionsRef.current.onToken?.(data.token);
         } else if (data.response) {
           accumulatedRef.current = data.response;
         }

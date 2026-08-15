@@ -1,8 +1,9 @@
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
 import type { ApiError } from '@/types';
+import { API_BASE_URL } from '@/constants';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   withCredentials: true, // send httpOnly cookies
   headers: {
     'Content-Type': 'application/json',

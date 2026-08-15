@@ -1,5 +1,6 @@
 import api from './client';
 import type { EmailAccount, ApiResponse, EmailProvider } from '@/types';
+import { API_BASE_URL } from '@/constants';
 
 export const emailAccountsApi = {
   list: async (): Promise<ApiResponse<EmailAccount[]>> => {
@@ -9,7 +10,7 @@ export const emailAccountsApi = {
 
   connectGmail: (): void => {
     const token = localStorage.getItem('nexa_access_token');
-    window.location.href = `/api/email-accounts/gmail/connect${token ? `?token=${encodeURIComponent(token)}` : ''}`;
+    window.location.href = `${API_BASE_URL}/email-accounts/gmail/connect${token ? `?token=${encodeURIComponent(token)}` : ''}`;
   },
 
   connectDemo: async (): Promise<ApiResponse<EmailAccount>> => {
