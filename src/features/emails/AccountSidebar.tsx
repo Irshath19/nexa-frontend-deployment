@@ -66,8 +66,19 @@ export function AccountSidebar({
     },
   });
 
-  // Auto-select first account if none selected
-  if (accounts.length > 0 && !selectedAccountId) {
+  // Auto-select valid account or recover from stale/deleted account IDs
+  useState(() => {
+    if (accounts.length > 0) {
+      const exists = accounts.some((a) => a.id === selectedAccountId);
+      if (!exists) {
+        setSelectedAccountId(accounts[0].id);
+      }
+    }
+  });
+
+  if (accounts.length > 0 && selectedAccountId && !accounts.some((a) => a.id === selectedAccountId)) {
+    setSelectedAccountId(accounts[0].id);
+  } else if (accounts.length > 0 && !selectedAccountId) {
     setSelectedAccountId(accounts[0].id);
   }
 

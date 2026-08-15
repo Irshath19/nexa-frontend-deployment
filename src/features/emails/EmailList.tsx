@@ -108,7 +108,7 @@ export function EmailList({
   onOpenAccounts,
   onAddAccount,
 }: EmailListProps) {
-  const { selectedAccountId, selectedDate, emailFilter, searchQuery } = useContextStore();
+  const { selectedAccountId, setSelectedAccountId, selectedDate, emailFilter, searchQuery } = useContextStore();
   const queryClient = useQueryClient();
 
   const { data: accountsData } = useQuery({
@@ -134,6 +134,13 @@ export function EmailList({
         limit: DEFAULT_PAGE_SIZE,
       }),
     enabled: !!selectedAccountId,
+    retry: (failureCount, err: any) => {
+      if (err?.status === 404 || err?.code === 'ACCOUNT_NOT_FOUND') {
+        setSelectedAccountId(null);
+        return false;
+      }
+      return failureCount < 1;
+    },
   });
 
   const emails = data?.data ?? [];

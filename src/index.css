@@ -427,3 +427,109 @@
     @apply flex-1 overflow-auto min-w-0;
   }
 }
+
+/* ============================================================
+   NEXA Email Reader Prose Styling
+   ============================================================ */
+
+.email-prose {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.email-prose p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.email-prose h1, .email-prose h2, .email-prose h3, .email-prose h4 {
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: inherit;
+  line-height: 1.3;
+}
+
+.email-prose h1 { font-size: 1.35rem; }
+.email-prose h2 { font-size: 1.2rem; }
+.email-prose h3 { font-size: 1.05rem; }
+
+.email-prose ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 1rem;
+  space-y: 0.35rem;
+}
+
+.email-prose ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.email-prose li {
+  margin-bottom: 0.25rem;
+  line-height: 1.6;
+}
+
+.email-prose blockquote {
+  border-left: 3px solid #6366f1;
+  padding: 0.6rem 1rem;
+  margin: 1rem 0;
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: 0 0.75rem 0.75rem 0;
+  font-style: italic;
+  opacity: 0.95;
+}
+
+.email-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.email-prose th {
+  padding: 0.6rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(150, 150, 150, 0.2);
+}
+
+.email-prose td {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.825rem;
+  border-bottom: 1px solid rgba(150, 150, 150, 0.1);
+}
+
+.email-prose hr {
+  border: 0;
+  border-top: 1px solid rgba(150, 150, 150, 0.2);
+  margin: 1.5rem 0;
+}
+
+.email-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.email-prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.35rem;
+  background-color: rgba(150, 150, 150, 0.12);
+}
+
+.email-prose pre {
+  padding: 0.85rem;
+  border-radius: 0.75rem;
+  background-color: rgba(20, 20, 25, 0.9);
+  color: #e4e4e7;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.825rem;
+}
+

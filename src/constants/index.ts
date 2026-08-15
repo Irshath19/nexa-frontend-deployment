@@ -89,7 +89,9 @@ export const STORAGE_KEYS = {
   SIDEBAR_COLLAPSED: 'nexa_sidebar_collapsed',
 } as const;
 
-export const API_BASE_URL = 'https://nexa-backend-qnds.onrender.com/api';
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? 'http://localhost:8000/api' : '/api');
 
 // ── Email categories ──────────────────────────────────────────
 export const EMAIL_CATEGORY_LABELS: Record<string, string> = {
