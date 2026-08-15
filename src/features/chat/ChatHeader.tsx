@@ -12,21 +12,65 @@ export interface ModelOption {
 }
 
 export const VERIFIED_FREE_MODELS: ModelOption[] = [
-  // ── Anthropic & OpenAI ───────────────────────────────────────
+  // ── OpenRouter Free API Models ───────────────────────────────
   {
-    id: 'claude-3-7-sonnet',
-    name: 'Claude 3.7 Sonnet',
-    provider: 'Anthropic',
-    description: 'Deep reasoning, complex architecture design, and advanced coding',
+    id: 'gpt-oss-120b',
+    name: 'GPT-OSS 120B',
+    provider: 'OpenRouter',
+    description: 'Large open-weight reasoning model',
   },
   {
-    id: 'gpt-4o',
-    name: 'ChatGPT (GPT-4o)',
-    provider: 'OpenAI',
-    description: 'Flagship multimodal intelligence and structured reasoning',
+    id: 'gpt-oss-20b',
+    name: 'GPT-OSS 20B',
+    provider: 'OpenRouter',
+    description: 'Efficient open-weight reasoning model',
+  },
+  {
+    id: 'llama-3.3-70b',
+    name: 'Llama 3.3 70B',
+    provider: 'OpenRouter',
+    description: 'Large-scale open-weight reasoning and synthesis',
+  },
+  {
+    id: 'nemotron-3-super',
+    name: 'Nemotron 3 Super',
+    provider: 'OpenRouter',
+    description: 'High-capability reasoning and instruction following',
+  },
+  {
+    id: 'nemotron-3-nano',
+    name: 'Nemotron 3 Nano',
+    provider: 'OpenRouter',
+    description: 'High-speed compact reasoning model',
+  },
+  {
+    id: 'gemma-4-26b',
+    name: 'Gemma 4 26B',
+    provider: 'OpenRouter',
+    description: 'Advanced open multimodal reasoning model',
   },
 
-  // ── Google Gemini Provider ───────────────────────────────────
+  // ── Cerebras Free API Models ─────────────────────────────────
+  {
+    id: 'llama-3.1-8b',
+    name: 'Llama 3.1 8B',
+    provider: 'Cerebras',
+    description: 'Ultra-fast inference and lightweight reasoning',
+  },
+  {
+    id: 'qwen-3-235b',
+    name: 'Qwen 3 235B',
+    provider: 'Cerebras',
+    description: 'Large-scale multilingual reasoning and coding',
+  },
+  {
+    id: 'glm-4.7',
+    name: 'GLM 4.7',
+    provider: 'Cerebras',
+    description: 'Advanced bilingual reasoning and structured task completion',
+  },
+
+  // ── Google Gemini Models ─────────────────────────────────────
   {
     id: 'gemini-2.0-flash',
     name: 'Gemini 2.0 Flash',
@@ -49,38 +93,18 @@ export const VERIFIED_FREE_MODELS: ModelOption[] = [
     available: true,
   },
 
-  // ── Groq Provider ────────────────────────────────────────────
+  // ── Direct Enterprise Models ─────────────────────────────────
   {
-    id: 'llama-3.3-70b',
-    name: 'Llama 3.3 70B',
-    provider: 'Groq',
-    description: 'Large-scale open-weight reasoning, synthesis, and coding',
+    id: 'claude-3-7-sonnet',
+    name: 'Claude 3.7 Sonnet',
+    provider: 'Anthropic',
+    description: 'Deep reasoning, complex architecture design, and advanced coding',
   },
   {
-    id: 'deepseek-r1-distill-70b',
-    name: 'DeepSeek R1 Distill 70B',
-    provider: 'Groq',
-    description: 'Step-by-step logic, math, and code reasoning',
-  },
-
-  // ── OpenRouter Provider ──────────────────────────────────────
-  {
-    id: 'qwen-2.5-72b',
-    name: 'Qwen 2.5 72B',
-    provider: 'OpenRouter',
-    description: 'Advanced multilingual reasoning and code generation',
-  },
-  {
-    id: 'deepseek-v3',
-    name: 'DeepSeek V3',
-    provider: 'OpenRouter',
-    description: 'Large-scale conversational reasoning and synthesis',
-  },
-  {
-    id: 'mistral-7b',
-    name: 'Mistral 7B Instruct',
-    provider: 'OpenRouter',
-    description: 'Compact general instruction following and reasoning',
+    id: 'gpt-4o',
+    name: 'ChatGPT (GPT-4o)',
+    provider: 'OpenAI',
+    description: 'Flagship multimodal intelligence and structured reasoning',
   },
 ];
 
@@ -128,16 +152,18 @@ export function ChatHeader({ status, selectedModel, onSelectModel }: ChatHeaderP
             id: m.id,
             name: m.name,
             provider:
-              m.provider === 'google'
-                ? 'Google'
-                : m.provider === 'groq'
-                ? 'Groq'
-                : m.provider === 'openrouter'
+              m.provider === 'openrouter'
                 ? 'OpenRouter'
+                : m.provider === 'cerebras'
+                ? 'Cerebras'
+                : m.provider === 'google'
+                ? 'Google'
                 : m.provider === 'anthropic'
                 ? 'Anthropic'
                 : m.provider === 'openai'
                 ? 'OpenAI'
+                : m.provider === 'groq'
+                ? 'Groq'
                 : m.provider,
             description: m.description,
             available: m.available,
@@ -243,7 +269,7 @@ export function ChatHeader({ status, selectedModel, onSelectModel }: ChatHeaderP
                       role="option"
                       aria-selected={isSelected}
                       disabled={!isAvailable}
-                      title={!isAvailable ? `${model.provider} API key required in .env` : undefined}
+                      title={!isAvailable ? `${model.provider} API key required in environment` : undefined}
                       onClick={() => {
                         if (!isAvailable) return;
                         onSelectModel(model.id);
