@@ -103,9 +103,16 @@ export function RegularSearchSection({
     return filteredJobs.slice(start, start + pageSize);
   }, [filteredJobs, currentPage, pageSize]);
 
-  const lastSearchTime = preferences?.lastSearchAt
-    ? new Date(preferences.lastSearchAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    : '8:00 AM IST';
+  const lastSearchTimeFormatted = preferences?.lastSearchAt
+    ? new Date(preferences.lastSearchAt).toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      })
+    : null;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -119,7 +126,7 @@ export function RegularSearchSection({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
-                  Daily Job Search
+                  Daily Jobs
                 </h2>
                 <span
                   className={cn(
@@ -130,25 +137,25 @@ export function RegularSearchSection({
                   )}
                 >
                   <span className={cn('w-1.5 h-1.5 rounded-full', isEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-400')} />
-                  {isEnabled ? 'Enabled' : 'Disabled'}
+                  {isEnabled ? 'Scheduled Active' : 'Disabled'}
                 </span>
               </div>
               <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
-                NEXA automatically discovers new jobs across the web every morning at 8:00 AM IST.
+                Automatically discovered every morning at 8:00 AM IST via GitHub Actions scheduler.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 self-end sm:self-center">
-            {/* Run search now */}
+            {/* Rerun Daily Search Button */}
             <button
               onClick={onRunDailySearchNow}
-              disabled={isRunningSearch}
+              disabled={isRunningSearch || isLoading}
               className="px-3.5 py-2 rounded-xl bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-800 dark:text-zinc-200 shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
-              title="Run daily agent right now"
+              title="Execute daily search agent right now"
             >
-              <RefreshCw size={13} className={cn(isRunningSearch && 'animate-spin text-indigo-600')} />
-              <span>{isRunningSearch ? 'Searching...' : 'Run Now'}</span>
+              <RefreshCw size={13} className={cn((isRunningSearch || isLoading) && 'animate-spin text-indigo-600')} />
+              <span>{isRunningSearch ? 'Running daily job search...' : 'Rerun Daily Search'}</span>
             </button>
 
             {/* Edit Preferences */}
@@ -157,7 +164,7 @@ export function RegularSearchSection({
               className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <SlidersHorizontal size={13} />
-              <span>Edit Preferences</span>
+              <span>Preferences</span>
             </button>
           </div>
         </div>
@@ -165,7 +172,7 @@ export function RegularSearchSection({
         {/* Status Metrics Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs">
           <div className="p-3 rounded-2xl bg-white/80 dark:bg-zinc-900/80 border border-zinc-200/60 dark:border-zinc-800">
-            <span className="text-[11px] text-zinc-400 font-medium">Schedule</span>
+            <span className="text-[11px] text-zinc-400 font-medium">Scheduled Run</span>
             <p className="font-bold text-zinc-800 dark:text-zinc-200 mt-0.5 flex items-center gap-1">
               <Calendar size={13} className="text-indigo-500" />
               <span>Daily at 8:00 AM IST</span>
@@ -173,15 +180,15 @@ export function RegularSearchSection({
           </div>
 
           <div className="p-3 rounded-2xl bg-white/80 dark:bg-zinc-900/80 border border-zinc-200/60 dark:border-zinc-800">
-            <span className="text-[11px] text-zinc-400 font-medium">Last Run</span>
+            <span className="text-[11px] text-zinc-400 font-medium">Last updated</span>
             <p className="font-bold text-zinc-800 dark:text-zinc-200 mt-0.5 flex items-center gap-1">
               <Clock size={13} className="text-indigo-500" />
-              <span>{lastSearchTime}</span>
+              <span>{lastSearchTimeFormatted || 'No daily run completed yet'}</span>
             </p>
           </div>
 
           <div className="p-3 rounded-2xl bg-white/80 dark:bg-zinc-900/80 border border-zinc-200/60 dark:border-zinc-800">
-            <span className="text-[11px] text-zinc-400 font-medium">Jobs Discovered</span>
+            <span className="text-[11px] text-zinc-400 font-medium">Jobs Found</span>
             <p className="font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">
               {jobs.length} Opportunities
             </p>
@@ -191,7 +198,7 @@ export function RegularSearchSection({
             <span className="text-[11px] text-zinc-400 font-medium">Status</span>
             <p className="font-bold text-zinc-800 dark:text-zinc-200 mt-0.5 flex items-center gap-1">
               <CheckCircle2 size={13} className="text-emerald-500" />
-              <span>{preferences?.lastSearchStatus || 'Completed'}</span>
+              <span>{preferences?.lastSearchStatus || 'Ready'}</span>
             </p>
           </div>
         </div>
@@ -314,8 +321,8 @@ export function RegularSearchSection({
         {isLoading && (
           <div className="p-12 text-center space-y-3">
             <Loader2 size={24} className="animate-spin text-indigo-600 mx-auto" />
-            <p className="text-xs text-zinc-500">
-              NEXA is discovering new opportunities and sorting Newest First...
+            <p className="text-xs text-zinc-500 font-medium">
+              {isRunningSearch ? 'Running daily job search across live sources...' : 'Loading latest jobs...'}
             </p>
           </div>
         )}
@@ -327,17 +334,27 @@ export function RegularSearchSection({
               <Briefcase size={20} />
             </div>
             <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
-              No new jobs found matching your criteria
+              No daily job search has been completed yet.
             </h4>
             <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-              Try adjusting your target job titles, experience level, or locations in preferences.
+              Jobs will automatically be discovered every morning at 8:00 AM IST, or you can run a search right now.
             </p>
-            <button
-              onClick={onOpenPreferences}
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold cursor-pointer"
-            >
-              Update Preferences
-            </button>
+            <div className="flex items-center justify-center gap-2 pt-1">
+              <button
+                onClick={onRunDailySearchNow}
+                disabled={isRunningSearch}
+                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
+              >
+                <RefreshCw size={13} className={cn(isRunningSearch && 'animate-spin')} />
+                <span>Rerun Daily Search</span>
+              </button>
+              <button
+                onClick={onOpenPreferences}
+                className="px-4 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-bold cursor-pointer"
+              >
+                Preferences
+              </button>
+            </div>
           </div>
         ) : (
           !isLoading && (

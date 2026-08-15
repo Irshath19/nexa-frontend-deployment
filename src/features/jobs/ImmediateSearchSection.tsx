@@ -29,7 +29,7 @@ interface ImmediateSearchSectionProps {
 }
 
 const SEARCH_STEPS = [
-  'NEXA is searching the web and job ecosystem...',
+  'Searching live job sources...',
   'Searching LinkedIn, Naukri, Indeed, Wellfound, and live feeds...',
   'Analyzing job descriptions & qualifications...',
   'Deduplicating cross-platform listings...',

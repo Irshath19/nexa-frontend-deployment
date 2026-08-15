@@ -29,11 +29,11 @@ import { JobPreferencesModal } from './JobPreferencesModal';
 import { cn } from '@/utils';
 import { toast } from 'sonner';
 
-type SearchMode = 'regular' | 'immediate' | 'saved';
+type SearchMode = 'daily' | 'immediate' | 'saved';
 
 export default function JobsPage() {
   const queryClient = useQueryClient();
-  const [activeMode, setActiveMode] = useState<SearchMode>('regular');
+  const [activeMode, setActiveMode] = useState<SearchMode>('daily');
   const [selectedJob, setSelectedJob] = useState<JobPosting | null>(null);
   const [isPreferencesModalOpen, setIsPreferencesModalOpen] = useState(false);
 
@@ -50,7 +50,7 @@ export default function JobsPage() {
   });
   const preferences = prefData?.data ?? null;
 
-  // ── 2. Fetch Daily Discovered Opportunities ──────────────────
+  // ── 2. Fetch Daily Discovered Opportunities (Read-Only) ──────
   const {
     data: dailyData,
     isLoading: isLoadingDaily,
@@ -77,13 +77,14 @@ export default function JobsPage() {
     },
   });
 
-  // ── Run Daily Search Now Mutation ───────────────────────────
+  // ── Run Daily Search Now Mutation (Explicit User Trigger) ─────
   const { mutate: runDailySearchNow, isPending: isRunningDailySearch } = useMutation({
     mutationFn: () => jobsApi.runDailySearch(),
     onSuccess: (res: any) => {
       queryClient.invalidateQueries({ queryKey: ['jobs-daily'] });
       queryClient.invalidateQueries({ queryKey: ['job-preferences'] });
-      toast.success(`NEXA discovered ${res?.data?.jobs?.length ?? 0} live opportunities.`);
+      const count = res?.data?.jobs?.length ?? 0;
+      toast.success(`Daily job search completed. Discovered ${count} live opportunities.`);
     },
     onError: () => toast.error('Unable to run daily search right now.'),
   });
@@ -146,13 +147,6 @@ export default function JobsPage() {
     }
   };
 
-  // Pre-seed immediate results on first view if empty
-  React.useEffect(() => {
-    if (activeMode === 'immediate' && immediateResults.length === 0 && !isSearchingImmediate) {
-      handleImmediateSearch({ jobTitle: 'AI Engineer', location: 'Remote' });
-    }
-  }, [activeMode]);
-
   return (
     <div className="flex flex-col h-full bg-zinc-50/50 dark:bg-zinc-950 overflow-y-auto">
       {/* ── GLOBAL STICKY JOBS HEADER ─────────────────────────── */}
@@ -174,18 +168,18 @@ export default function JobsPage() {
 
           {/* Mode Switcher Segmented Control */}
           <div className="flex items-center p-1 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200/70 dark:border-zinc-700/60 self-start md:self-auto text-xs font-semibold">
-            {/* Regular Search Tab */}
+            {/* Daily Jobs Tab */}
             <button
-              onClick={() => setActiveMode('regular')}
+              onClick={() => setActiveMode('daily')}
               className={cn(
                 'px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5',
-                activeMode === 'regular'
+                activeMode === 'daily'
                   ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
                   : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
               )}
             >
-              <Sparkles size={13} />
-              <span>Regular Search</span>
+              <Calendar size={13} />
+              <span>Daily Jobs</span>
             </button>
 
             {/* Immediate Search Tab */}
@@ -226,8 +220,8 @@ export default function JobsPage() {
 
       {/* ── MAIN CONTENT CONTAINER ───────────────────────────── */}
       <main className="flex-1 p-6 sm:p-8 max-w-6xl w-full mx-auto pb-16">
-        {/* TAB 1: REGULAR SEARCH */}
-        {activeMode === 'regular' && (
+        {/* TAB 1: DAILY JOBS */}
+        {activeMode === 'daily' && (
           <RegularSearchSection
             preferences={preferences}
             jobs={dailyJobs}
