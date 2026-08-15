@@ -3,13 +3,14 @@ import { AccountSidebar } from './AccountSidebar';
 import { EmailList } from './EmailList';
 import { EmailDetail } from './EmailDetail';
 import { AddAccountModal } from './AddAccountModal';
-import { Mail, Sparkles } from 'lucide-react';
+import { Mail, Sparkles, X, Plus } from 'lucide-react';
 import { cn } from '@/utils';
 import type { Email } from '@/types';
 
 export default function EmailPage() {
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
   const [showAddAccount, setShowAddAccount] = useState(false);
+  const [showMobileAccounts, setShowMobileAccounts] = useState(false);
   const [isAccountsCollapsed, setIsAccountsCollapsed] = useState(false);
   const [isListCollapsed, setIsListCollapsed] = useState(false);
   const [isFullscreenReading, setIsFullscreenReading] = useState(false);
@@ -25,7 +26,7 @@ export default function EmailPage() {
 
   return (
     <div className="flex h-full overflow-hidden bg-zinc-100/60 dark:bg-zinc-950 page-enter relative">
-      {/* ── 1. ACCOUNTS PANEL (Left) ─────────────────────────── */}
+      {/* ── 1. ACCOUNTS PANEL (Desktop Left Sidebar) ─────────── */}
       {!isFullscreenReading && (
         <div className="hidden md:flex flex-shrink-0">
           <AccountSidebar
@@ -33,6 +34,55 @@ export default function EmailPage() {
             onToggleCollapse={() => setIsAccountsCollapsed(!isAccountsCollapsed)}
             onAddAccount={() => setShowAddAccount(true)}
           />
+        </div>
+      )}
+
+      {/* ── 1B. MOBILE ACCOUNTS DRAWER / BOTTOM SHEET ────────── */}
+      {showMobileAccounts && (
+        <div className="fixed inset-0 z-50 md:hidden flex items-end justify-center">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            onClick={() => setShowMobileAccounts(false)}
+            aria-hidden="true"
+          />
+
+          {/* Bottom Sheet */}
+          <div className="relative bg-white dark:bg-zinc-900 rounded-t-3xl border border-zinc-200 dark:border-zinc-800 shadow-2xl w-full max-h-[85dvh] flex flex-col z-10 animate-fade-in-scale overflow-hidden">
+            {/* Sheet Handle */}
+            <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
+              <div className="w-12 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-100 dark:border-zinc-800 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <Mail size={16} className="text-indigo-600 dark:text-indigo-400" />
+                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                  Email Accounts
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowMobileAccounts(false)}
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+                aria-label="Close accounts sheet"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Content using AccountSidebar in expanded mode */}
+            <div className="flex-1 overflow-y-auto p-2">
+              <AccountSidebar
+                isCollapsed={false}
+                onToggleCollapse={() => setShowMobileAccounts(false)}
+                onAddAccount={() => {
+                  setShowMobileAccounts(false);
+                  setShowAddAccount(true);
+                }}
+              />
+            </div>
+          </div>
         </div>
       )}
 
@@ -52,6 +102,8 @@ export default function EmailPage() {
             onSelectEmail={handleSelectEmail}
             isCollapsed={isListCollapsed}
             onToggleCollapse={() => setIsListCollapsed(!isListCollapsed)}
+            onOpenAccounts={() => setShowMobileAccounts(true)}
+            onAddAccount={() => setShowAddAccount(true)}
           />
         </div>
       )}

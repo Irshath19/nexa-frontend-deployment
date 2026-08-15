@@ -34,7 +34,7 @@ export function NexaQuickAsk() {
   };
 
   return (
-    <div className="px-6 mb-6">
+    <div className="px-4 sm:px-6 mb-5 sm:mb-6">
       <div className="nexa-card overflow-hidden">
         {/* Main input */}
         <form onSubmit={handleSubmit} className="flex items-center gap-3 p-4 border-b border-zinc-100 dark:border-zinc-800">

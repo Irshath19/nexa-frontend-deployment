@@ -27,14 +27,14 @@ export function DashboardHeader() {
   };
 
   return (
-    <div className="px-6 pt-6 pb-4">
+    <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-3 sm:pb-4">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         {/* Greeting */}
         <div>
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
             {getGreeting(user?.displayName)}
           </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
             Here's what's happening{' '}
             {isToday ? 'today' : `on ${format(currentDate, 'MMMM d')}`}.
           </p>

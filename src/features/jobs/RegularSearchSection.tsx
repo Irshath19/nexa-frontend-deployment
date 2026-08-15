@@ -1,24 +1,20 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
-  Sparkles,
   Calendar,
   Clock,
   CheckCircle2,
   RefreshCw,
-  Settings,
   SlidersHorizontal,
-  ChevronRight,
   Briefcase,
-  AlertCircle,
   Loader2,
   ArrowUpDown,
   Globe,
   ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import type { JobPosting, JobPreferences } from '@/types/jobs';
 import { JobCard } from './JobCard';
 import { cn } from '@/utils';
-import { toast } from 'sonner';
 
 interface RegularSearchSectionProps {
   preferences: JobPreferences | null;

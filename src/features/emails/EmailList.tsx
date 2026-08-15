@@ -10,6 +10,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { emailsApi } from '@/services/api/emails';
+import { emailAccountsApi } from '@/services/api/emailAccounts';
 import { useContextStore } from '@/app/store';
 import { QUERY_KEYS, DEFAULT_PAGE_SIZE } from '@/constants';
 import { formatEmailTime, getInitials, cn } from '@/utils';
@@ -17,13 +18,15 @@ import { DateBar } from './DateBar';
 import { EmailSearch } from './EmailSearch';
 import { EmailFilters } from './EmailFilters';
 import { toast } from 'sonner';
-import type { Email } from '@/types';
+import type { Email, EmailAccount } from '@/types';
 
 interface EmailListProps {
   selectedEmailId: string | null;
   onSelectEmail: (email: Email) => void;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
+  onOpenAccounts?: () => void;
+  onAddAccount?: () => void;
 }
 
 function SkeletonRow({ isCollapsed }: { isCollapsed?: boolean }) {
@@ -50,12 +53,18 @@ function SkeletonRow({ isCollapsed }: { isCollapsed?: boolean }) {
   );
 }
 
-function EmptyState({ type }: { type: 'no-account' | 'no-emails' | 'no-results' }) {
+function EmptyState({
+  type,
+  onAddAccount,
+}: {
+  type: 'no-account' | 'no-emails' | 'no-results';
+  onAddAccount?: () => void;
+}) {
   const messages = {
     'no-account': {
-      icon: <Mail size={22} className="text-zinc-400" />,
-      title: 'No account selected',
-      body: 'Select a connected Gmail account to view emails.',
+      icon: <Mail size={22} className="text-indigo-500" />,
+      title: 'No email account connected',
+      body: 'Connect your Gmail account or launch the instant demo inbox to view emails.',
     },
     'no-emails': {
       icon: <Inbox size={22} className="text-zinc-400" />,
@@ -73,11 +82,20 @@ function EmptyState({ type }: { type: 'no-account' | 'no-emails' | 'no-results' 
 
   return (
     <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-      <div className="w-11 h-11 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 flex items-center justify-center mb-3">
+      <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900/60 flex items-center justify-center mb-3 text-indigo-600 dark:text-indigo-400 shadow-xs">
         {m.icon}
       </div>
-      <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">{m.title}</p>
-      <p className="text-[11px] text-zinc-400 dark:text-zinc-500 max-w-[200px] leading-relaxed">{m.body}</p>
+      <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mb-1">{m.title}</p>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-[240px] leading-relaxed mb-4">{m.body}</p>
+
+      {type === 'no-account' && onAddAccount && (
+        <button
+          onClick={onAddAccount}
+          className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs cursor-pointer min-h-[44px] flex items-center gap-1.5"
+        >
+          <span>Connect Email Account</span>
+        </button>
+      )}
     </div>
   );
 }
@@ -87,9 +105,18 @@ export function EmailList({
   onSelectEmail,
   isCollapsed = false,
   onToggleCollapse,
+  onOpenAccounts,
+  onAddAccount,
 }: EmailListProps) {
   const { selectedAccountId, selectedDate, emailFilter, searchQuery } = useContextStore();
   const queryClient = useQueryClient();
+
+  const { data: accountsData } = useQuery({
+    queryKey: QUERY_KEYS.EMAIL_ACCOUNTS,
+    queryFn: emailAccountsApi.list,
+  });
+  const accounts: EmailAccount[] = (accountsData?.data ?? []) as EmailAccount[];
+  const activeAccount = accounts.find((a: EmailAccount) => a.id === selectedAccountId) || accounts[0];
 
   const { data, isLoading } = useQuery({
     queryKey: QUERY_KEYS.EMAILS({
@@ -176,28 +203,53 @@ export function EmailList({
   return (
     <div className="h-full flex flex-col bg-white dark:bg-zinc-900 overflow-hidden">
       {/* Expanded Header */}
-      <div className="h-14 px-4 flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
+      <div className="h-14 px-3 sm:px-4 flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800 flex-shrink-0 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200 flex-shrink-0">
             EMAILS
           </h2>
           {emails.length > 0 && (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200/40 dark:border-indigo-800/40">
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200/40 dark:border-indigo-800/40 flex-shrink-0">
               {emails.length}
             </span>
           )}
+
+          {/* Mobile Account Switcher Trigger */}
+          {onOpenAccounts && (
+            <button
+              onClick={onOpenAccounts}
+              className="md:hidden flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-medium max-w-[150px] truncate border border-zinc-200 dark:border-zinc-700 ml-1 cursor-pointer"
+              title="Switch or manage email accounts"
+            >
+              <Mail size={12} className="text-indigo-500 flex-shrink-0" />
+              <span className="truncate text-[11px]">{activeAccount?.email || 'Accounts'}</span>
+            </button>
+          )}
         </div>
 
-        {onToggleCollapse && (
-          <button
-            onClick={onToggleCollapse}
-            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-            title="Collapse Email List"
-            aria-label="Collapse Email List"
-          >
-            <PanelLeftClose size={16} />
-          </button>
-        )}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {/* Mobile Add Account Quick Action */}
+          {onAddAccount && (
+            <button
+              onClick={onAddAccount}
+              className="md:hidden flex items-center gap-1 px-2.5 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold shadow-xs cursor-pointer"
+              title="Connect new email account"
+            >
+              <span>+ Add</span>
+            </button>
+          )}
+
+          {onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              className="hidden md:flex p-1.5 rounded-lg text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              title="Collapse Email List"
+              aria-label="Collapse Email List"
+            >
+              <PanelLeftClose size={16} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Navigation Controls */}
@@ -208,11 +260,14 @@ export function EmailList({
       {/* Email Items List */}
       <div className="flex-1 overflow-y-auto divide-y divide-zinc-100/80 dark:divide-zinc-800/60 scrollbar-thin">
         {!selectedAccountId ? (
-          <EmptyState type="no-account" />
+          <EmptyState type="no-account" onAddAccount={onAddAccount} />
         ) : isLoading ? (
           [...Array(6)].map((_, i) => <SkeletonRow key={i} />)
         ) : emails.length === 0 ? (
-          <EmptyState type={searchQuery || emailFilter !== 'all' ? 'no-results' : 'no-emails'} />
+          <EmptyState
+            type={searchQuery || emailFilter !== 'all' ? 'no-results' : 'no-emails'}
+            onAddAccount={onAddAccount}
+          />
         ) : (
           emails.map((email) => (
             <EmailListItem

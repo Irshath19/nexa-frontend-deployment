@@ -63,7 +63,7 @@ export function EmailStatsBanner() {
   const stats = data?.data?.stats ?? EMPTY_STATS;
 
   return (
-    <div className="px-6 mb-6">
+    <div className="px-4 sm:px-6 mb-5 sm:mb-6">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard
           label="Total Emails"

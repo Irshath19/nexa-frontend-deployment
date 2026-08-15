@@ -6,7 +6,6 @@ import {
   Loader2,
   Briefcase,
   MapPin,
-  Clock,
   Filter,
   RefreshCw,
   ChevronLeft,

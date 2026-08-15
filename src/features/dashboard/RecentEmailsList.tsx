@@ -99,7 +99,7 @@ export function RecentEmailsList() {
   const recentEmails = data?.data?.recentEmails ?? [];
 
   return (
-    <div className="px-6 mb-6">
+    <div className="px-4 sm:px-6 mb-5 sm:mb-6">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
           Recent Emails

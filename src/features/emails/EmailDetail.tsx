@@ -5,7 +5,6 @@ import {
   Star,
   MailOpen,
   Reply,
-  Forward,
   Maximize2,
   Minimize2,
   Paperclip,
@@ -23,7 +22,6 @@ import {
   ShieldCheck,
   CheckSquare,
   Copy,
-  ExternalLink,
   Loader2,
   Globe,
   Link2,
@@ -32,7 +30,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   emailsApi,
   type TaskItem,
-  type CalendarEventDetails,
   type ExplainEmailResult,
 } from '@/services/api/emails';
 import { QUERY_KEYS } from '@/constants';

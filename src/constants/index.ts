@@ -11,6 +11,7 @@ export const ROUTES = {
   CHAT: '/chat',
   EMAILS: '/emails',
   JOBS: '/jobs',
+  PROFILE: '/profile',
   SETTINGS: '/settings',
   // OAuth callbacks
   OAUTH_CALLBACK_GMAIL: '/oauth/gmail/callback',

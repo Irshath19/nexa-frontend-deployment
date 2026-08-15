@@ -150,31 +150,31 @@ export default function JobsPage() {
   return (
     <div className="flex flex-col h-full bg-zinc-50/50 dark:bg-zinc-950 overflow-y-auto">
       {/* ── GLOBAL STICKY JOBS HEADER ─────────────────────────── */}
-      <header className="px-6 py-5 border-b border-zinc-200/80 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md sticky top-0 z-20 flex-shrink-0">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <header className="px-4 sm:px-6 py-3.5 sm:py-5 border-b border-zinc-200/80 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md sticky top-0 z-20 flex-shrink-0">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-indigo-600 text-white font-bold flex items-center justify-center shadow-xs">
-                <Briefcase size={18} />
+              <div className="w-8 sm:w-9 h-8 sm:h-9 rounded-2xl bg-indigo-600 text-white font-bold flex items-center justify-center shadow-xs flex-shrink-0">
+                <Briefcase size={16} />
               </div>
-              <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
+              <h1 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
                 Jobs
               </h1>
             </div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
               Let NEXA search and rank real job opportunities from verified providers.
             </p>
           </div>
 
           {/* Mode Switcher Segmented Control */}
-          <div className="flex items-center p-1 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200/70 dark:border-zinc-700/60 self-start md:self-auto text-xs font-semibold">
+          <div className="flex items-center p-1 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200/70 dark:border-zinc-700/60 max-w-full overflow-x-auto scrollbar-none text-xs font-semibold flex-shrink-0">
             {/* Daily Jobs Tab */}
             <button
               onClick={() => setActiveMode('daily')}
               className={cn(
-                'px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5',
+                'px-3.5 sm:px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap min-h-[38px]',
                 activeMode === 'daily'
-                  ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                  ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-bold'
                   : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
               )}
             >
@@ -186,9 +186,9 @@ export default function JobsPage() {
             <button
               onClick={() => setActiveMode('immediate')}
               className={cn(
-                'px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5',
+                'px-3.5 sm:px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap min-h-[38px]',
                 activeMode === 'immediate'
-                  ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                  ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-bold'
                   : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
               )}
             >
@@ -200,9 +200,9 @@ export default function JobsPage() {
             <button
               onClick={() => setActiveMode('saved')}
               className={cn(
-                'px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5',
+                'px-3.5 sm:px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap min-h-[38px]',
                 activeMode === 'saved'
-                  ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                  ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-bold'
                   : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
               )}
             >
@@ -219,7 +219,7 @@ export default function JobsPage() {
       </header>
 
       {/* ── MAIN CONTENT CONTAINER ───────────────────────────── */}
-      <main className="flex-1 p-6 sm:p-8 max-w-6xl w-full mx-auto pb-16">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-6xl w-full mx-auto pb-16">
         {/* TAB 1: DAILY JOBS */}
         {activeMode === 'daily' && (
           <RegularSearchSection
