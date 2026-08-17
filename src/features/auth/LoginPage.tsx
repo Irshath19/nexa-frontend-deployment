@@ -63,7 +63,7 @@ export default function LoginPage() {
                 Email
               </label>
               <div className="relative">
-                <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
                 <input
                   id="login-email"
                   type="email"
@@ -73,7 +73,7 @@ export default function LoginPage() {
                   required
                   autoComplete="email"
                   autoFocus
-                  className={cn('nexa-input pl-9', error && 'border-red-300 dark:border-red-700 focus:border-red-400')}
+                  className={cn('nexa-input !pl-10', error && 'border-red-300 dark:border-red-700 focus:border-red-400')}
                 />
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 </Link>
               </div>
               <div className="relative">
-                <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
                 <input
                   id="login-password"
                   type={showPassword ? 'text' : 'password'}
@@ -97,15 +97,15 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className={cn('nexa-input pl-9 pr-10', error && 'border-red-300 dark:border-red-700')}
+                  className={cn('nexa-input !pl-10 !pr-10', error && 'border-red-300 dark:border-red-700')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
